@@ -23,13 +23,13 @@ export class MyCodeLensProvider implements CodeLensProvider {
         let c: Command = {
           command: 'testingcodelens.helloWorld',
           title: 'Hello World',
+          arguments: [i + 1],
         };
 
         let topOfDocument = new Range(i, 0, i, 0);
         let codeLens = new CodeLens(topOfDocument, c);
 
         codeLensArr.push(codeLens);
-        console.log(i + 1);
       }
     }
 
