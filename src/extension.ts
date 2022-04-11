@@ -4,6 +4,7 @@ import * as vscode from 'vscode';
 import { MyCodeLensProvider } from './myCodeLensProvider';
 
 const nReadlines = require('n-readlines');
+const fs = require('fs');
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -25,47 +26,72 @@ export function activate(context: vscode.ExtensionContext) {
         return;
       }
 
-      let depth = 0;
+      if (!vscode.workspace.workspaceFolders) {
+        return;
+      }
 
       await editor.document.save();
 
       const filePath = editor.document.fileName;
-
       const fileToRun = new nReadlines(filePath);
 
+      let depth = 0;
       let line;
       let lineNumber = 1;
 
+      let fileArr = [];
+
+      // Reads line by line
       while ((line = fileToRun.next())) {
+        // Picks up from the clicked line
         if (lineNumber > lineValue) {
           if (line.toString('ascii').match(/\/\/.*Start-Block/)) {
             depth += 1;
           }
 
           if (line.toString('ascii').match(/\/\/.*End-Block/) && depth === 0) {
-            fileToRun.stop();
+            break;
           }
 
           if (line.toString('ascii').match(/\/\/.*End-Block/) && depth !== 0) {
             depth -= 1;
           }
 
-          console.log(`Line ${lineNumber} has: ${line.toString('ascii')}`);
-          console.log('depth', depth);
+          fileArr.push(line.toString('ascii'));
         }
 
         lineNumber++;
       }
 
-      console.log('end of file.');
-      const used = process.memoryUsage().heapUsed / 1024 / 1024;
-      console.log(
-        `The script uses approximately ${Math.round(used * 100) / 100} MB`,
+      // Creates the .vscode/temp dir if not created
+      fs.mkdirSync(
+        `${vscode.workspace.workspaceFolders[0].uri.fsPath}/.vscode/temp`,
+        { recursive: true },
       );
 
-      // The code you place here will be executed every time your command is executed
-      // Display a message box to the user
-      vscode.window.showInformationMessage('Hello World from TestingCodelens!');
+      // Creates the file to be run
+      fs.writeFileSync(
+        `${vscode.workspace.workspaceFolders[0].uri.fsPath}/.vscode/temp/runCodeBlock.js`,
+        fileArr.join('\n'),
+      );
+
+      // Terminal stuff
+
+      let terminal = null;
+      if (vscode.window.terminals) {
+        terminal = vscode.window.terminals.find(
+          (terminal) => terminal.name === 'RunBlock',
+        );
+      }
+
+      if (!terminal) {
+        terminal = vscode.window.createTerminal(`RunBlock`);
+      }
+
+      terminal.show(true);
+      terminal.sendText('clear');
+
+      terminal.sendText(`node .vscode/temp/runCodeBlock.js`);
     },
   );
 
@@ -87,4 +113,13 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 // this method is called when your extension is deactivated
-export function deactivate() {}
+// Clean up
+export function deactivate() {
+  if (!vscode.workspace.workspaceFolders) {
+    return;
+  }
+
+  fs.unlinkSync(
+    `${vscode.workspace.workspaceFolders[0].uri.fsPath}/.vscode/temp/runCodeBlock.js`,
+  );
+}
