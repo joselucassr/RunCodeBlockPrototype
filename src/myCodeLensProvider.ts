@@ -18,7 +18,7 @@ export class MyCodeLensProvider implements CodeLensProvider {
     let codeLensArr: CodeLens[] = [];
 
     for (let i = 0; i < document.lineCount; i += 1) {
-      if (document.lineAt(i).text === '// Start-Block') {
+      if (document.lineAt(i).text.match(/\/\/.*Start-Block/)) {
         // Define what command we want to trigger when activating the CodeLens
         let c: Command = {
           command: 'testingcodelens.helloWorld',
