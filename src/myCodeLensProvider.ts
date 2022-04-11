@@ -22,7 +22,7 @@ export class MyCodeLensProvider implements CodeLensProvider {
         // Define what command we want to trigger when activating the CodeLens
         let c: Command = {
           command: 'testingcodelens.helloWorld',
-          title: 'Hello World',
+          title: 'Run Code Block',
           arguments: [i + 1],
         };
 

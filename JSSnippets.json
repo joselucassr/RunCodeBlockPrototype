@@ -1,0 +1,17 @@
+{
+  "Start Code Block": {
+    "prefix": "startcb",
+    "body": "// Start-Block",
+    "description": "Starts a code block"
+  },
+  "End Code Block": {
+    "prefix": "endcb",
+    "body": "// End-Block",
+    "description": "Ends a code block"
+  },
+  "Start and End a Code block": {
+    "prefix": "codeblock",
+    "body": ["// Start-Block", "$1", "// End-Block"],
+    "description": "Starts and Ends a code block"
+  }
+}

@@ -20,6 +20,12 @@
         "command": "testingcodelens.helloWorld",
         "title": "Hello World"
       }
+    ],
+    "snippets": [
+      {
+        "language": "javascript",
+        "path": "./snippets.json"
+      }
     ]
   },
   "scripts": {
