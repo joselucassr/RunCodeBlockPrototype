@@ -38,9 +38,6 @@ export function activate(context: vscode.ExtensionContext) {
 
       while ((line = fileToRun.next())) {
         if (lineNumber > lineValue) {
-          console.log(`Line ${lineNumber} has: ${line.toString('ascii')}`);
-          console.log('depth', depth);
-
           if (line.toString('ascii').match(/\/\/.*Start-Block/)) {
             depth += 1;
           }
@@ -52,6 +49,9 @@ export function activate(context: vscode.ExtensionContext) {
           if (line.toString('ascii').match(/\/\/.*End-Block/) && depth !== 0) {
             depth -= 1;
           }
+
+          console.log(`Line ${lineNumber} has: ${line.toString('ascii')}`);
+          console.log('depth', depth);
         }
 
         lineNumber++;
