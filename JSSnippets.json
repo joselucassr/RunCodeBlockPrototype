@@ -11,7 +11,7 @@
   },
   "Start and End a Code block": {
     "prefix": "codeblock",
-    "body": ["// Start-Block", "$1", "// End-Block"],
+    "body": ["// Start-Block", "$0", "// End-Block"],
     "description": "Starts and Ends a code block"
   }
 }
